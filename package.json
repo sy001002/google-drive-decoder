@@ -1,0 +1,13 @@
+{
+  "name": "google-drive-decoder",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "repository": "https://sam40305@bitbucket.org/sam40305/google-drive-decoder.git",
+  "author": "Shuo Yang <shuo.yang.tek@gmail.com>",
+  "license": "NONE",
+  "private": true,
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "node-fetch": "^1.7.3"
+  }
+}
