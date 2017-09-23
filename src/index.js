@@ -62,9 +62,17 @@ async function main(url, timeout = 30000) {
    if( !filename )
       throw new Error('can not get filename');
 
-   const headers = await getHeaders(urlMaker.getDownload(id), timeout);
+   let headers;
+   let location;
+   while(1) {
+      headers = await getHeaders(location || urlMaker.getDownload(id), timeout);
+      if( headers.location )
+         location = headers.location;
+      else
+         break;
+   }
 
-   if( headers.location ) {
+   if( location ) {
       return {
          url: headers.location,
          filename
