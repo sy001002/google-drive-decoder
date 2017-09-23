@@ -82,7 +82,8 @@ async function main(url, timeout = 30000) {
    if( headers.location ) {
       return {
          url: await followLocation(headers.location, timeout),
-         filename
+         filename,
+         range: 'bytes'
       };
    }
 
@@ -93,7 +94,8 @@ async function main(url, timeout = 30000) {
    return {
       url: await followLocation(urlMaker.getConfirm(id, cookie.confirm), timeout, cookie.cookie),
       filename,
-      cookie: cookie.cookie
+      cookie: cookie.cookie,
+      range: 'bytes'
    };
 }
 

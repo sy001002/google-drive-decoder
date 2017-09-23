@@ -6,6 +6,7 @@ gdDecoder('<url>', 30000)
    .then(data => console.log(data))
    /*{
       url: '<real url>',
+      range: 'bytes',
       finename: '<filename>',
       cookie: `<cookie>`         // optional
    }*/
