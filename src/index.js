@@ -29,6 +29,18 @@ function getHeaders(url, timeout) {
    });
 }
 
+async function followLocation(url, timeout) {
+   let result = url;
+
+   while(1) {
+      const headers = await getHeaders(result, timeout);
+      if( headers.location )
+         result = headers.location;
+      else
+         return result;
+   }
+}
+
 function getCookie(headers) {
    const setCookieList = headers['set-cookie'];
    if( !Array.isArray(setCookieList) )
@@ -62,19 +74,10 @@ async function main(url, timeout = 30000) {
    if( !filename )
       throw new Error('can not get filename');
 
-   let headers;
-   let location;
-   while(1) {
-      headers = await getHeaders(location || urlMaker.getDownload(id), timeout);
-      if( headers.location )
-         location = headers.location;
-      else
-         break;
-   }
-
-   if( location ) {
+   const headers = await getHeaders(urlMaker.getDownload(id), timeout);
+   if( headers.location ) {
       return {
-         url: headers.location,
+         url: await followLocation(headers.location, timeout),
          filename
       };
    }
@@ -84,7 +87,7 @@ async function main(url, timeout = 30000) {
       throw new Error('cookie download_warning* not found');
 
    return {
-      url: urlMaker.getConfirm(id, cookie.confirm),
+      url: await followLocation(urlMaker.getConfirm(id, cookie.confirm), timeout),
       filename,
       cookie: cookie.cookie
    };
