@@ -1,3 +1,4 @@
+const { URL } = require('url');
 const https = require('https');
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
@@ -14,7 +15,13 @@ function getFilename(body) {
 
 function getHeaders(url, timeout) {
    return new Promise((resolve, reject) => {
-      https.get(url, res => {
+      const Url = new URL(url);
+
+      https.get({
+         hostname: Url.hostname,
+         path: Url.pathname + Url.search,
+         timeout
+      }, res => {
          const headers = {...res.headers};
          res.destroy();
          resolve(headers);
@@ -55,7 +62,7 @@ async function main(url, timeout = 30000) {
    if( !filename )
       throw new Error('can not get filename');
 
-   const headers = await getHeaders(urlMaker.getDownload(id));
+   const headers = await getHeaders(urlMaker.getDownload(id), timeout);
 
    if( headers.location ) {
       return {
