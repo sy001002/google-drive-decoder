@@ -13,14 +13,18 @@ function getFilename(body) {
       return target.attr('content');
 }
 
-function getHeaders(url, timeout) {
+function getHeaders(url, timeout, cookie) {
    return new Promise((resolve, reject) => {
       const Url = new URL(url);
+      const headers = {};
+      if( cookie )
+         headers.cookie = cookie;
 
       https.get({
          hostname: Url.hostname,
          path: Url.pathname + Url.search,
-         timeout
+         timeout,
+         headers
       }, res => {
          const headers = {...res.headers};
          res.destroy();
@@ -29,11 +33,11 @@ function getHeaders(url, timeout) {
    });
 }
 
-async function followLocation(url, timeout) {
+async function followLocation(url, timeout, cookie) {
    let result = url;
 
    while(1) {
-      const headers = await getHeaders(result, timeout);
+      const headers = await getHeaders(result, timeout, cookie);
       if( headers.location )
          result = headers.location;
       else
@@ -87,7 +91,7 @@ async function main(url, timeout = 30000) {
       throw new Error('cookie download_warning* not found');
 
    return {
-      url: await followLocation(urlMaker.getConfirm(id, cookie.confirm), timeout),
+      url: await followLocation(urlMaker.getConfirm(id, cookie.confirm), timeout, cookie.cookie),
       filename,
       cookie: cookie.cookie
    };
